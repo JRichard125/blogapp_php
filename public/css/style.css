@@ -1,0 +1,186 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
+
+:root {
+    --font-family: 'Roboto', sans-serif;
+    --primary: #487eb0;
+    --primary-dark: #213a52;
+    --dark: #2c3e50;
+    --bg-light: #ecf0f1;
+    --text-color: #444;
+    --text-danger: red;
+    --text-color-light: #fff;
+    --box-shadow: rgba(60, 64, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+    --border: 1px solid #eee;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,body {
+    margin: 0;
+    padding: 0;
+    font-size: 10px;
+    font-family: var(--font-family);
+}
+
+h1, p {
+    margin: 0;
+}
+
+h1 {
+    margin-bottom: 1rem;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.container {
+    font-size: 1.6rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    background-color: var(--primary);
+    padding: 1.5rem;
+    box-shadow: var(--box-shadow);
+    color: var(--text-color-light);
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-menu {
+    margin: 0;
+}
+
+.header-menu li {
+    border-radius: 3px;
+    padding: 5px 15px;
+    transition: background-color 0.4s;
+}
+
+.header-menu li:hover {
+    background-color: var(--primary-dark);
+}
+
+footer {
+    background-color: var(--dark);
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+footer p {
+    color: var(--text-color-light);
+    padding: 1.5rem;
+}
+
+.logo {
+    font-weight: 600;
+    font-size: 2rem;
+    color: var(--text-color-light);
+}
+
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-color);
+}
+
+.todo-container {
+    padding: 1.5rem;
+    background-color: white;
+    border: var(--border);
+    border-radius: 3px;
+    min-width: 60rem;
+    min-height: 40rem;
+    box-shadow: var(--box-shadow);
+}
+
+.todo-container h1 {
+    text-align: center;
+}
+
+.todo-form {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+
+.todo-form input {
+    flex: 1;
+    margin-right: 0.5rem;
+    border: var(--border);
+    border-radius: 3px;
+    padding: 1rem 1.5rem;
+}
+
+.btn {
+    background-color: white;
+    font-weight: 700;
+    color: var(--text-color);
+    font-size: 1.6;
+    border: var(--border);
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    border-radius: 3px;
+    margin: 0.5rem;
+}
+
+.btn:hover {
+    background-color: var(--primary);
+    color: var(--text-color-light);
+}
+
+.btn-secondary {
+    background-color: var(--text-danger);
+    color: white;
+}
+
+.btn-small {
+    padding: 5px 10px;
+    font-size: 1.4rem;
+}
+
+.text-danger {
+    color: red;
+    margin: .5rem 0;
+}
+
+.todo-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: .5rem;
+    padding: .5rem 1.5rem;
+}
+
+.todo-item:nth-child(odd) {
+    background-color: var(--bg-light);
+}
+
+.todo-name {
+    flex: 1;
+    margin-right: 0.5rem;
+}
+
+.low-opacity {
+    opacity: .2;
+}
+
+.active {
+    background-color: var(--primary-dark);
+}
