@@ -62,12 +62,12 @@
                             <h1 class="p-10"><?= $category ?>( <?= $num ?> )</h1>
                             <div class="articles-container">
                                     <?php foreach($articlesPerCategory[$category] as $article) : ?>
-                                        <div class="article block">
+                                        <a href="/show-article.php?id=<?= $article['id'] ?>" class="article block">
                                             <div class="overflow">
                                                 <div class="img-container" style="background-image: url(<?= $article['image']  ?>)"></div>
                                             </div>
                                             <h2><?= $article['title'] ?></h2>
-                                        </div>
+                                        </a>
                                     <?php endforeach; ?>
                                 
                             </div>
@@ -76,12 +76,12 @@
                         <h1><?= $selectedCategory ?></h1>
                         <div class="articles-container">
                         <?php foreach($articlesPerCategory[$selectedCategory] as $article) : ?>
-                            <div class="article block">
+                            <a href="/show-article.php?id=<?= $article['id'] ?>" class="article block">
                                 <div class="overflow">
                                     <div class="img-container" style="background-image: url(<?= $article['image']  ?>)"></div>
                                 </div>
                                 <h2><?= $article['title'] ?></h2>
-                            </div>
+                            </a>
                         <?php endforeach; ?>
                         </div>
                     <?php endif; ?>
