@@ -34,7 +34,7 @@ h1 {
 }
 
 h2 {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     margin: 2rem .5rem;
 }
 
@@ -223,7 +223,7 @@ footer p {
 
 /* content */
 .content {
-    max-width: 100rem;
+    max-width: 120rem;
     width: 100%;
     flex: 1;
     display: flex;
