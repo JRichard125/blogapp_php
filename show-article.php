@@ -35,6 +35,10 @@
                 <h1 class="article-title"><?= $article['title'] ?></h1>
                 <div class="separator"></div>
                 <p class="article-content"><?= $article['content'] ?></p>
+                <div class="action">
+                    <a href="/form-article.php?id=<?= $article['id'] ?>" class="btn btn-primary">Editer l'article</a>
+                    <a href="/delete-article.php?id=<?= $article['id'] ?>" class="btn btn-secondary">Supprimer l'article</a>
+                </div>
             </div>
         </div>
         <?php require_once 'includes/footer.php' ?>

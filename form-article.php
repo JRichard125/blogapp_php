@@ -1,5 +1,4 @@
 <?php
-
     const ERROR_REQUIRED = "Veuillez renseigner ce champ";
     const ERROR_TITLE_TOO_SHORT = "Le titre est trop court";
     const ERROR_CONTENT_TOO_SHORT = "L'article est trop court";
@@ -7,7 +6,7 @@
 
     $filename = __DIR__."/data/articles.json";
     $articles = [];
-
+    $category = '';
 
     if(file_exists($filename)) {
         $articles = json_decode(file_get_contents($filename), true) ?? [];
@@ -20,18 +19,33 @@
         'content' => ''
     ];
 
+    $_GET = filter_input_array(INPUT_GET, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $idArticle = $_GET['id'] ?? '';
+    // si vous avez un idArticle vous etes en mode edition, sinon on est en mode creation
+
+    // EN mode edition on recupere notre article
+    if($idArticle) {
+        $articleIndex = array_search($idArticle, array_column($articles, 'id'));
+        $article = $articles[$articleIndex];
+
+        
+        $title = $article['title'];
+        $image = $article['image'];
+        $category = $article['category'];
+        $content = $article['content'];
+    }
 
     if($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_POST = filter_input_array(INPUT_POST, [
             'title' => FILTER_SANITIZE_SPECIAL_CHARS,
-            'image' =>  FILTER_SANITIZE_URL,
+            'image' => FILTER_SANITIZE_URL,
             'category' => FILTER_SANITIZE_SPECIAL_CHARS,
             'content' => [
                 'filter' => FILTER_SANITIZE_SPECIAL_CHARS,
                 'flag' => FILTER_FLAG_NO_ENCODE_QUOTES
             ]
             ]);
-
+        
         $title = $_POST['title'] ?? '' ;
         $image = $_POST['image'] ?? '' ;
         $category = $_POST['category'] ?? '' ;
@@ -59,24 +73,36 @@
             $errors['content'] = ERROR_CONTENT_TOO_SHORT;
         }
 
-
         if(empty(array_filter($errors, fn ($error) => $error !== ''))) {
-            // mon formulaire est vide
-            $newArticle = [
-                'title' => $title,
-                'image' => $image,
-                'category' => $category,
-                'content' => $content,
-                'id' => time()
-            ];
+            // mon formulaire est valide
 
-            $articles = [...$articles, $newArticle];
+            if($idArticle) {
+                //mode edition
+                $articles[$articleIndex]['title'] = $title;
+                $articles[$articleIndex]['image'] = $image;
+                $articles[$articleIndex]['category'] = $category;
+                $articles[$articleIndex]['content'] = $content;
+            } else {
+                //mode creation
+                $newArticle = [
+                    'title' => $title,
+                    'image' => $image,
+                    'category' => $category,
+                    'content' => $content,
+                    'id' => time()
+                ];
+    
+                $articles = [...$articles, $newArticle];
+            }
             file_put_contents($filename, json_encode($articles));
-        };
+            header('Location: /');
+
+            
+        }
     }
-
-
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -88,50 +114,53 @@
     <div class="container">
         <?php require_once "includes/header.php" ?>
         <div class="content">
-           <div class="block p-20 form-container">
-                <h1>Ecrire un article</h1>
-                <form action="/add-article.php" method="POST">
+            <div class="block p-20 form-container">
+                <h1><?= $idArticle ? 'Editer' : 'Ajouter' ?> un article</h1>
+                <form action="/form-article.php<?= $idArticle ? "?id=$idArticle" : '' ?>" method="POST">
                     <div class="form-control">
                         <label for="title">Title</label>
-                        <input type="text" name="title" id="title" value=<?= $title ?? '' ?>>
+                        <input type="text" name="title" id="title" value="<?= $title ?? '' ?>" >
                         <?php if($errors['title']) : ?>
-                        <p class="text-error"><?= $errors['title'] ?></p>
-                        <?php endif ;?>
+                            <p class="text-error"><?= $errors['title'] ?></p>
+                        <?php endif ; ?>
                     </div>
+
                     <div class="form-control">
                         <label for="image">Image</label>
-                        <input type="text" name="image" id="image" value=<?= $image ?? '' ?>>
+                        <input type="text" name="image" id="image" value="<?= $image ?? '' ?>" >
                         <?php if($errors['image']) : ?>
-                        <p class="text-error"><?= $errors['image'] ?></p>
-                        <?php endif ;?>
+                            <p class="text-error"><?= $errors['image'] ?></p>
+                        <?php endif ; ?>
                     </div>
+
                     <div class="form-control">
                         <label for="category">Categorie</label>
-                        <select name="category" id="category" value=<?= $category ?? '' ?>>
-                            <option value="technologie">Technologie</option>
-                            <option value="nature">Nature</option>
-                            <option value="politique">Politique</option>
+                        <select name="category" id="category" value="<?= $category ?? '' ?>">
+                            <option <?= !$category || $category === 'technologie' ? 'selected' : '' ?> value="technologie">Technologie</option>
+                            <option <?= $category === 'nature' ? 'selected' : '' ?> value="nature">Nature</option>
+                            <option <?= $category === 'politique' ? 'selected' : '' ?> value="politique">Politique</option>
                         </select>
                         <?php if($errors['category']) : ?>
-                        <p class="text-error"><?= $errors['category'] ?></p>
-                        <?php endif ;?>
+                            <p class="text-error"><?= $errors['category'] ?></p>
+                        <?php endif ; ?>
                     </div>
+
                     <div class="form-control">
                         <label for="content">Contenu</label>
                         <textarea name="content"><?= $content ?? '' ?></textarea>
                         <?php if($errors['content']) : ?>
-                        <p class="text-error"><?= $errors['content'] ?></p>
-                        <?php endif ;?>
+                            <p class="text-error"><?= $errors['content'] ?></p>
+                        <?php endif ; ?>
                     </div>
 
                     <div class="form-action">
                         <a href="/" class="btn btn-secondary">Annuler</a>
-                        <button class="btn btn-primary" type="submit">Sauvegarder</button>
+                        <button class="btn btn-primary" type="submit"><?= $idArticle ? 'Sauvegarder' : 'Poster' ?></button>
                     </div>
                 </form>
-           </div>
+            </div>
         </div>
-        <?php require_once 'includes/footer.php' ?>
+        <?php require_once "includes/footer.php" ?>
     </div>
 </body>
 </html>
