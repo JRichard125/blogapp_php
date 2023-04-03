@@ -1,11 +1,8 @@
 <?php 
 
-    $pdo = require_once './database/database.php';
-    $statement = $pdo->prepare('SELECT * FROM article');
-    $statement->execute();
-    $articles = $statement->fetchAll();
-    // $articleDAO = require_once './database/models/ArticleDAO.php'
-    // $articles = $articleDAO->getAll();
+
+    $articleDAO = require_once './database/models/ArticleDAO.php';
+    $articles = $articleDAO->getAll();
 
     $categories = [];
     $selectedCategory = '';

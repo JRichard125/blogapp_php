@@ -9,12 +9,7 @@
     if(!$idArticle){
         header('Location: /');
     } else {
-        $pdo = require_once './database/database.php';
-        $statement = $pdo->prepare('SELECT * FROM article WHERE id=:id');
-        $statement->bindValue(':id', $idArticle);
-        $statement->execute();
-        $article = $statement->fetch();
-        // $article = $articleDAO->getOne($idArticle);
+        $article = $articleDAO->getOne($idArticle);
         }
 
 ?>

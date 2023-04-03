@@ -10,14 +10,6 @@
     $articleDAO = require_once './database/models/ArticleDAO.php';
 
 
-    $pdo = require_once('./database/database.php');
-    $statementCreateOne = $pdo->prepare(
-        'INSERT INTO article (title, category, content, image) VALUES (:title, :category, :content, :image)'
-    );
-    $statementReadOne = $pdo->prepare('SELECT * FROM article WHERE id=:id');
-    $statementUpdateOne = $pdo->prepare(
-        'UPDATE article SET title=:title, category=:category, content=:content, image=:image WHERE id=:id'
-    );
 
     $articles = [];
     $category = '';
@@ -36,9 +28,7 @@
 
     // EN mode edition on recupere notre article
     if($idArticle) {
-        $statementReadOne->bindValue(':id', $idArticle);
-        $statementReadOne->execute();
-        $article = $statementReadOne->fetch();
+        $article = $articleDAO->getOne($idArticle);
 
 
         
@@ -98,29 +88,14 @@
 
                 $articleDAO->updateOne($article, $idArticle);
 
-                $statementUpdateOne->bindValue(':title', $article['title']);
-                $statementUpdateOne->bindValue(':category', $article['category']);
-                $statementUpdateOne->bindValue(':content', $article['content']);
-                $statementUpdateOne->bindValue(':image', $article['image']);
-                $statementUpdateOne->bindValue(':id', $idArticle);
-                $statementUpdateOne->execute();
-
             } else {
                 //mode creation
-                // deletable
                 $articleDAO->createOne([
                     'title' => $title,
                     'category' =>$category,
                     'content' => $content,
                     'image' => $image,
                 ]);
-
-
-                $statementCreateOne->bindValue(':title', $title);
-                $statementCreateOne->bindValue(':category', $category);
-                $statementCreateOne->bindValue(':content', $content);
-                $statementCreateOne->bindValue(':image', $image);
-                $statementCreateOne->execute();
             }
             header('Location: /');
 

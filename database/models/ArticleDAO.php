@@ -67,7 +67,6 @@ class ArticleDAO {
         $this->statementUpdateOne->execute();
         return $article;
     }
-
 }
 
 $pdo = require_once './database/database.php';
