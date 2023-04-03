@@ -4,10 +4,27 @@
     const ERROR_CONTENT_TOO_SHORT = "L'article est trop court";
     const ERROR_IMAGE_URL = "L'image doit etre une url valide";
 
+    /**
+     * @var ArticleDAO
+     */
+    $articleDAO = require_once './database/models/ArticleDAO.php';
+
+
+    $pdo = require_once('./database/database.php');
+    $statementCreateONe = $pdo->prepare(
+        'INSERT INTO article (title, category; content, image) VALUES (:title, :category, :content, :image)'
+    );
+    $statementReadOne = $pdo->prepare('SELECT * FROM article WHERE id=:id');
+    $statementUpdateOne = $pdo->prepare(
+        'UPDATE article SET title=:title, category=:category, content=:content, image=:image WHERE id=:id'
+    );
+
+    //deletabke
     $filename = __DIR__."/data/articles.json";
     $articles = [];
     $category = '';
 
+    // deletable
     if(file_exists($filename)) {
         $articles = json_decode(file_get_contents($filename), true) ?? [];
     }
@@ -25,6 +42,11 @@
 
     // EN mode edition on recupere notre article
     if($idArticle) {
+        // $statementReadOne.bindValue(':id', $idArticle);
+        $statementReadOne->execute();
+        $article = $statementReadOne->fetch();
+
+        // deletable
         $articleIndex = array_search($idArticle, array_column($articles, 'id'));
         $article = $articles[$articleIndex];
 
@@ -78,12 +100,36 @@
 
             if($idArticle) {
                 //mode edition
-                $articles[$articleIndex]['title'] = $title;
-                $articles[$articleIndex]['image'] = $image;
-                $articles[$articleIndex]['category'] = $category;
-                $articles[$articleIndex]['content'] = $content;
+                $article['title'] = $title;
+                $article['image'] = $image;
+                $article['category'] = $category;
+                $article['content'] = $content;
+
+                $articleDAO->updateOne($article, $idArticle);
+
+                $statementUpdateOne->bindValue(':title', $article['title']);
+                $statementUpdateOne->bindValue(':category', $article['category']);
+                $statementUpdateOne->bindValue(':content', $article['content']);
+                $statementUpdateOne->bindValue(':image', $article['image']);
+                $statementUpdateOne->bindValue(':id', $idArticle);
+
             } else {
                 //mode creation
+                // deletable
+                $articleDAO->createOne([
+                    'title' => $title,
+                    'category' =>$category,
+                    'content' => $content,
+                    'image' => $image,
+                ]);
+
+
+                $statementCreateONe->bindValue(':title', $title);
+                $statementCreateONe->bindValue(':category', $category);
+                $statementCreateONe->bindValue(':content', $content);
+                $statementCreateONe->bindValue(':image', $image);
+                $statementCreateONe->execute();
+
                 $newArticle = [
                     'title' => $title,
                     'image' => $image,
@@ -94,7 +140,7 @@
     
                 $articles = [...$articles, $newArticle];
             }
-            file_put_contents($filename, json_encode($articles));
+            file_put_contents($filename, json_encode($articles)); // deletable
             header('Location: /');
 
             
