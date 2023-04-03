@@ -20,7 +20,7 @@ class ArticleDAO {
             'SELECT * FROM article WHERE id=:id'
         );
         $this->statementCreateOne = $this->pdo->prepare(
-            'INSERT INTO article (title, category; content, image) VALUES (:title, :category, :content, :image)'
+            'INSERT INTO article (title, category, content, image) VALUES (:title, :category, :content, :image)'
         );
         $this->statementUpdateOne = $this->pdo->prepare(
             'UPDATE article SET title=:title, category=:category, content=:content, image=:image WHERE id=:id'
