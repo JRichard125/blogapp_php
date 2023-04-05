@@ -69,5 +69,5 @@ class ArticleDAO {
     }
 }
 
-$pdo = require_once './database/database.php';
-return new ArticleDAO($pdo);
+    global $pdo;
+    return new ArticleDAO($pdo);

@@ -1,4 +1,13 @@
 <?php
+
+    require __DIR__.'/database/database.php';
+    $authDAO = require './database/models/AuthDAO.php';
+    $currentUser= $authDAO->isLoggedIn();
+
+    if(!$currentUser) {
+        header('Location: /auth-login.php');
+    }
+
     const ERROR_REQUIRED = "Veuillez renseigner ce champ";
     const ERROR_TITLE_TOO_SHORT = "Le titre est trop court";
     const ERROR_CONTENT_TOO_SHORT = "L'article est trop court";
