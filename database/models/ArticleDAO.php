@@ -8,6 +8,7 @@ class ArticleDAO {
     private PDOStatement $statementCreateOne;
     private PDOStatement $statementUpdateOne;
     private PDOStatement $statementDeleteOne;
+    private PDOStatement $statementReadUserAll;
 
     function __construct(
         private PDO $pdo
@@ -28,12 +29,21 @@ class ArticleDAO {
         $this->statementDeleteOne = $this->pdo->prepare(
             'DELETE FROM article WHERE id=:id'
         );
+        $this->statementReadUserAll = $this->pdo->prepare(
+            'SELECT * FROM article WHERE author=:authorId'
+        );
     }
 
     public function getAll() {
         $this->statementReadAll->execute();
         return $this->statementReadAll->fetchAll();
         
+    }
+
+    public function getArticlesForCurrentUser($userId) {
+        $this->statementReadUserAll->bindValue(':authorId', $userId);
+        $this->statementReadUserAll->execute();
+        return $this->statementReadUserAll->fetchAll();
     }
 
     public function getOne(int $id) {

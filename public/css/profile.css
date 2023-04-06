@@ -1,3 +1,14 @@
+.content-profile {
+    max-width: 120rem;
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-flow: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 0;
+}
+
 .info-container ul li {
     display: flex;
 }

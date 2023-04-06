@@ -18,7 +18,10 @@
 
 
         if($idArticle) {
-            $articleDAO->deleteOne($idArticle);
+            $article = $articleDAO->getOne($idArticle);
+            if($article['author'] === $currentUser['id']) {
+                $articleDAO->deleteOne($idArticle);
+            }
         }
         header('Location: /');
     }
