@@ -10,6 +10,6 @@
     if($sessionId) {
         //supprimer la session de la bdd
         $authDAO->logout($sessionId);
-        setcookie('session', '', time() -1);
+
         header('Location: /auth-login.php');
     }

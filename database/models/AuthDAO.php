@@ -23,7 +23,7 @@
             );
             //session
             $this->statementCreateSession= $this->pdo->prepare(
-                'INSERT INTO session VALUES (DEFAULT , :userid)'
+                'INSERT INTO session VALUES (:sessionid, :userid)'
             );
             $this->statementReadSession= $this->pdo->prepare(
                 'SELECT * FROM session WHERE id=:id'
@@ -59,11 +59,17 @@
         }
 
         function createSession($userId) {
+
+            $sessionId = bin2hex(random_bytes(32));
+
+            $this->statementCreateSession->bindValue(':sessionid', $sessionId);
             $this->statementCreateSession->bindValue(':userid', $userId);
             $this->statementCreateSession->execute();
 
-            // on recupere le id de la session qui vient d etre creer
-            return $this->pdo->lastInsertId();
+            $signature = hash_hmac('sha256', $sessionId, 'formation dwwm');
+            // on creer notre cookie
+            setcookie('session', $sessionId, time() + 60 * 60 * 24 * 14, "", "", false, true);
+            setcookie('signature', $signature, time() + 60 * 60 * 24 * 14, "", "", false, true);
         }
 
         function getSessionById($sessionId) {
@@ -76,12 +82,17 @@
 
     
             $sessionId = $_COOKIE["session"] ?? '';
+            $signature = $_COOKIE["signature"] ?? '';
     
-            if($sessionId) {
-                $session = $this->getSessionById($sessionId);
+            if($sessionId && $signature) {
+                $hash = hash_hmac('sha256', $sessionId, 'formation dwwm');
+
+                if(hash_equals($signature, $hash)) {
+                    $session = $this->getSessionById($sessionId);
     
-                if($session) {
-                    $user = $this->getUserById($session['userid']);
+                    if($session) {
+                        $user = $this->getUserById($session['userid']);
+                    }
                 }
             }
     
@@ -93,6 +104,8 @@
         function logout($sessionId) {
             $this->statementDeleteSession->bindValue(':id', $sessionId);
             $this->statementDeleteSession->execute();
+            setcookie('session', '', time() -1);
+            setcookie('signature', '', time() -1);
         }
     }
 
