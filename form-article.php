@@ -39,8 +39,6 @@
     if($idArticle) {
         $article = $articleDAO->getOne($idArticle);
 
-
-        
         $title = $article['title'];
         $image = $article['image'];
         $category = $article['category'];
@@ -94,6 +92,7 @@
                 $article['image'] = $image;
                 $article['category'] = $category;
                 $article['content'] = $content;
+                $article['author'] = $currentUser['id'];
 
                 $articleDAO->updateOne($article, $idArticle);
 
@@ -104,6 +103,7 @@
                     'category' =>$category,
                     'content' => $content,
                     'image' => $image,
+                    'author' => $currentUser['id']
                 ]);
             }
             header('Location: /');
