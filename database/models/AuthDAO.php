@@ -2,30 +2,30 @@
 
     class AuthDAO {
 
-        public PDOStatement $statementCreate; // statemenetCreateUser
-        public PDOStatement $statementRead; // statementReadUserFromUsername
-        public PDOStatement $statementReadFromId; // statementReadUserFromId
+        public PDOStatement $statementCreateUser; 
+        public PDOStatement $statementReadUserFromUsername; 
+        public PDOStatement $statementReadUserFromId; 
         public PDOStatement $statementCreateSession;
-        public PDOStatement $statementReadSession; // sattementReadSessionById
+        public PDOStatement $statementReadSessionById;
         public PDOStatement $statementDeleteSession;
 
         function __construct(public PDO $pdo )
         {
             // User
-            $this->statementCreate = $this->pdo->prepare(
+            $this->statementCreateUser = $this->pdo->prepare(
                 'INSERT INTO user VALUES (DEFAULT, :firstname, :lastname, :email, :password)'
             );
-            $this->statementRead = $this->pdo->prepare(
+            $this->statementReadUserFromUsername = $this->pdo->prepare(
                 'SELECT * FROM user WHERE email=:email'
             );
-            $this->statementReadFromId = $this->pdo->prepare(
+            $this->statementReadUserFromId = $this->pdo->prepare(
                 'SELECT * FROM user WHERE id=:id'
             );
             //session
             $this->statementCreateSession= $this->pdo->prepare(
                 'INSERT INTO session VALUES (:sessionid, :userid)'
             );
-            $this->statementReadSession= $this->pdo->prepare(
+            $this->statementReadSessionById= $this->pdo->prepare(
                 'SELECT * FROM session WHERE id=:id'
             );
             $this->statementDeleteSession =$this->pdo->prepare(
@@ -37,25 +37,25 @@
         function create($user) {
             $hashPassword = password_hash($user['password'], PASSWORD_ARGON2I);
 
-            $this->statementCreate->bindValue(':firstname', $user['firstname']);
-            $this->statementCreate->bindValue(':lastname', $user['lastname']);
-            $this->statementCreate->bindValue(':email', $user['email']);
-            $this->statementCreate->bindValue(':password', $hashPassword);
-            $this->statementCreate->execute();
+            $this->statementCreateUser->bindValue(':firstname', $user['firstname']);
+            $this->statementCreateUser->bindValue(':lastname', $user['lastname']);
+            $this->statementCreateUser->bindValue(':email', $user['email']);
+            $this->statementCreateUser->bindValue(':password', $hashPassword);
+            $this->statementCreateUser->execute();
         }
 
         function getUser($email) {
-            $this->statementRead->bindValue(':email', $email);
-            $this->statementRead->execute();
+            $this->statementReadUserFromUsername->bindValue(':email', $email);
+            $this->statementReadUserFromUsername->execute();
 
-            return $this->statementRead->fetch();
+            return $this->statementReadUserFromUsername->fetch();
         }
 
         function getUserById($userId) {
-            $this->statementReadFromId->bindValue(':id', $userId);
-            $this->statementReadFromId->execute();
+            $this->statementReadUserFromId->bindValue(':id', $userId);
+            $this->statementReadUserFromId->execute();
 
-            return $this->statementReadFromId->fetch();
+            return $this->statementReadUserFromId->fetch();
         }
 
         function createSession($userId) {
@@ -73,9 +73,9 @@
         }
 
         function getSessionById($sessionId) {
-            $this->statementReadSession->bindValue(':id', $sessionId);
-            $this->statementReadSession->execute();
-            return $this->statementReadSession->fetch();
+            $this->statementReadSessionById->bindValue(':id', $sessionId);
+            $this->statementReadSessionById->execute();
+            return $this->statementReadSessionById->fetch();
         }
 
         function isLoggedIn() {
